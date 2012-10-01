@@ -231,7 +231,7 @@ public class ServerInventoryImpl implements ServerInventory {
     }
 
     @Override
-    public void reconnectServer(final String serverName, final ModelNode domainModel, final boolean running) {
+    public void reconnectServer(final String serverName, final ModelNode domainModel, final boolean running, final boolean stopping) {
         if(shutdown || connectionFinished) {
             throw HostControllerMessages.MESSAGES.hostAlreadyShutdown();
         }
@@ -246,7 +246,11 @@ public class ServerInventoryImpl implements ServerInventory {
             return;
         }
         if(running) {
-            server.reconnectServerProcess();
+            if(!stopping) {
+                 server.reconnectServerProcess();
+            } else {
+                 server.setServerProcessStopping();
+            }
         } else {
             server.removeServerProcess();
         }
